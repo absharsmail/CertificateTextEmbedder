@@ -8,13 +8,18 @@ from reportlab.pdfgen import canvas
 
 packet = io.BytesIO()
 pdfmetrics.registerFont(TTFont('GothamMedium', 'assets/GothamMedium.ttf'))
+pdfmetrics.registerFont(TTFont('GothamLight', 'assets/GothamLight.ttf'))
 pdfmetrics.registerFont(TTFont('GothamBook', 'assets/GothamBook.ttf'))
 can = canvas.Canvas(packet, pagesize=pagesizes.landscape(pagesizes.B0))
-can.setFont('GothamMedium', 25)
+
+can.setFont('GothamMedium', 14)
 can.setFillColor("#ef5362")
-can.drawCentredString(430, 273, "Aisha Muhammed musthafa")
-can.setFont('GothamBook', 18)
-can.drawCentredString(535, 225, "152")
+can.drawString(344, 474.5, "30015")
+
+can.setFont('GothamLight', 10.5)
+can.setFillColor("#000000")
+can.drawString(219, 356, "152")
+can.drawString(219, 419, "Aisha Muhammed musthafa")
 can.save()
 
 # move to the beginning of the StringIO buffer

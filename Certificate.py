@@ -35,24 +35,32 @@ def nameFormatter(fullName):
 
 def create_certificates(dataFile, templatePdf, certificatesFolder, pdfOnly):
     wb = load_workbook(filename=dataFile, data_only=True)
-    sheetData = wb.get_sheet_names()
+    sheetData = wb.sheetnames
     for sheet_name in sheetData:
-        data = wb.get_sheet_by_name(sheet_name).values
+        data = wb[sheet_name]
         for row_num, row in enumerate(data):
-            if row[0] is None:
+            if row[0].value is None:
                 break
-            if row_num == 0:
+            if row_num == 0 or row_num == 1:
                 continue
-            name = nameFormatter(row[0])
+            rollNo = str(int(row[2].value))
+            name = nameFormatter(row[3].value)
+            school = row[4].value.upper()
+            date = "2025 January 12, 10 AM"
+            rowlist = [school, sheet_name, name, date]
             packet = io.BytesIO()
             pdfmetrics.registerFont(TTFont('GothamMedium', 'assets/GothamMedium.ttf'))
+            pdfmetrics.registerFont(TTFont('GothamLight', 'assets/GothamLight.ttf'))
             pdfmetrics.registerFont(TTFont('GothamBook', 'assets/GothamBook.ttf'))
             can = canvas.Canvas(packet, pagesize=pagesizes.landscape(pagesizes.B0))
-            can.setFont('GothamMedium', 25)
+            can.setFont('GothamMedium', 14)
             can.setFillColor("#ef5362")
-            can.drawCentredString(430, 273, name)
-            can.setFont('GothamBook', 18)
-            print(name)
+            can.drawString(344, 474.5, rollNo)
+            can.setFont('GothamLight', 10.5)
+            can.setFillColor("#000000")
+            for i in range(4):
+                can.drawString(219, 355 + i * 21, rowlist[i])
+            print(sheet_name, name, school)
             can.save()
             # move to the beginning of the StringIO buffer
             packet.seek(0)
@@ -63,6 +71,6 @@ def create_certificates(dataFile, templatePdf, certificatesFolder, pdfOnly):
 data_file = "sheet.xlsx"
 template_pdf = "certificate.pdf"
 certificates_folder = "Certificates"
-saveState = 1 # 0: Only Pdf, 1: Only Image, 2: Both Pdf and Image
+saveState = 0  # 0: Only Pdf, 1: Only Image, 2: Both Pdf and Image
 create_certificates(data_file, template_pdf, certificates_folder, saveState)
 print("Certificates created successfully!")
